@@ -5,7 +5,7 @@ const EditPosts = (props) => {
     const toggle = () => setModal(!modal);
  
     return (
-      <div>
+      <>
         <Button onClick={toggle}>Edit Posts</Button>
         <Modal isOpen={modal} toggle={toggle}>
           <ModalHeader toggle={toggle}>Edit Post</ModalHeader>
@@ -30,7 +30,7 @@ const EditPosts = (props) => {
             </Button>
           </ModalFooter>
         </Modal>
-      </div>
+      </>
     );
 }
 
