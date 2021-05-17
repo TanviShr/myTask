@@ -35,8 +35,6 @@ const Dashboard = (props) => {
       })
       .catch((err) => console.error(err));
   }, []);
-
- 
   const createPost = () => {
     const postval = {
       title: "this is the title",
