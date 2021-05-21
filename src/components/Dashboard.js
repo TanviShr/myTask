@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import EditPosts from "./EditPosts";
+import Pagination from "./Pagination"
+import {useHistory} from "react-router-dom"
+import Posts from "./Posts"
 // eslint-disable-next-line
 import { formData, UserId } from "./Signup";
 import {
-  Card,
-  CardBody,
-  CardText,
   Button,
   Modal,
   ModalBody,
@@ -20,9 +19,15 @@ import {
   NavLink,
 } from "reactstrap";
 const Dashboard = (props) => {
+  const history = useHistory();
+  const path = window.location.pathname;
+  const query = new URLSearchParams(props.location.search);
+  const id = query.get("UserId");
   const [modal, setModal] = useState(false);
   const [collapsed, setCollapsed] = useState(true);
   const [posts, setPosts] = useState([]);
+  const [currentPage,setCurrentPage] = useState(1);
+  const [postsPerPage] = useState(10);
 
   const toggle = () => setModal(!modal);
   const toggleNavbar = () => setCollapsed(!collapsed);
@@ -34,7 +39,10 @@ const Dashboard = (props) => {
         setPosts(res.data);
       })
       .catch((err) => console.error(err));
-  }, []);
+      history.push(`${path}?UserId=1&page=${currentPage}`);
+      window.scrollTo({ behavior: 'smooth', top: '0px' });
+  }, [currentPage, history, path]);
+
   const createPost = () => {
     const postval = {
       title: "this is the title",
@@ -55,16 +63,18 @@ const Dashboard = (props) => {
           "Post creation failed.";
       });
     toggle();
+    
   };
-
+  const indexOfLastPost = currentPage * postsPerPage;
+  const indexOfFirstPost = indexOfLastPost - postsPerPage;
+  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
+  
+  const paginate = (number) =>setCurrentPage(number); 
+  
   const logout = () => {
     localStorage.removeItem("formData");
   };
-
-  const query = new URLSearchParams(props.location.search);
-  const id = query.get("UserId");
   
-
   return (
     <div id="cards">
       <Navbar color="faded" light>
@@ -105,17 +115,12 @@ const Dashboard = (props) => {
           </Button>
         </ModalFooter>
       </Modal>
-      {posts.map((posts) => (
-        <Card key={posts.id} style={{ width: "60rem", margin: "20px 30px" }}>
-          <CardBody>
-            <CardText> Id: {posts.id} </CardText>
-            <CardText> UserId: {posts.userId} </CardText>
-            <CardText> Title: {posts.title} </CardText>
-            <CardText> Body: {posts.body} </CardText>
-            {posts.userId === Number(id) && <EditPosts />}
-          </CardBody>
-        </Card>
-      ))}
+      <Posts posts = {currentPosts} id={id} currentPage={currentPage}/>
+      <Pagination
+        postsPerPage={postsPerPage}
+        totalPosts={posts.length}
+        paginate={paginate}
+      />
     </div>
   );
 };

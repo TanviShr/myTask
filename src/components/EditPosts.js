@@ -3,10 +3,10 @@ import {useState} from 'react'
 const EditPosts = (props) => {
     const [modal, setModal] = useState(false);
     const toggle = () => setModal(!modal);
- 
+  
     return (
       <>
-        <Button onClick={toggle}>Edit Posts</Button>
+        <Button style={{float:"left"}} onClick={toggle}>Edit Post</Button>
         <Modal isOpen={modal} toggle={toggle}>
           <ModalHeader toggle={toggle}>Edit Post</ModalHeader>
           <ModalBody>
